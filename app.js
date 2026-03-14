@@ -452,14 +452,21 @@ const renderFilterTags = (targetId, items, selected) => {
 
 const updateTagSummary = () => {
   const wrap = document.getElementById("filter-tags")
+  // 获取最外层的 filters 容器
+  const filtersContainer = document.querySelector(".filters") 
   const all = [...state.filters.cuisines, ...state.filters.price, ...state.filters.status, ...state.filters.tags]
   const clearBtn = document.getElementById("filter-clear")
+  
   if (all.length) {
     wrap.innerHTML = all.map((item) => `<span class="tag">${item}</span>`).join("")
     if (clearBtn) clearBtn.style.display = "inline-block"
+    // 有筛选条件时，显示外层容器
+    if (filtersContainer) filtersContainer.style.display = "flex" 
   } else {
     wrap.innerHTML = ""
     if (clearBtn) clearBtn.style.display = "none"
+    // 没有筛选条件时，将整个外层容器彻底隐藏
+    if (filtersContainer) filtersContainer.style.display = "none" 
   }
 }
 
