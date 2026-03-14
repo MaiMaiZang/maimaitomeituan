@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>学城觅食·Campus Bites</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo" aria-label="品牌标识">
+            <img alt="美食图标" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ff9b6a'/%3E%3Cstop offset='100%25' stop-color='%23ff6f2c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M12 34h40c0 8-8 14-20 14s-20-6-20-14z' fill='%23fff'/%3E%3Crect x='28' y='48' width='8' height='4' rx='2' fill='%23fff'/%3E%3Cpath d='M20 24l12 10M44 24l-12 10' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+          </div>
+          <div>
+            <div class="title">学城觅食·Campus Bites</div>
+            <div class="subtitle">大学城学生专属美食地图</div>
+          </div>
+        </div>
+        <div class="top-actions">
+          <div class="notify">
+            <button class="pill ghost" id="notify-btn">消息</button>
+            <span class="badge" id="notify-badge">3</span>
+          </div>
+          <button class="pill" id="shake-btn">随机摇一摇</button>
+        </div>
+      </header>
+      
+      <section class="hero">
+        <div class="hero-text">
+          <h1>你的大学城美食向导。</h1>
+          <p>同学评价才算数，学生优惠才划算——聚餐约会自习，打卡收藏等你来</p>
+          <div class="word-cloud" aria-label="关键词云">
+            <span class="word size-3 accent">川菜</span>
+            <span class="word size-2">轻食</span>
+            <span class="word size-1">自习</span>
+            <span class="word size-3">烧烤</span>
+            <span class="word size-2 accent">奶茶</span>
+            <span class="word size-2">咖啡</span>
+            <span class="word size-1">聚会</span>
+            <span class="word size-1">夜宵</span>
+            <span class="word size-2">低卡</span>
+            <span class="word size-1">外卖</span>
+            <span class="word size-2 accent">团建</span>
+            <span class="word size-1">打卡</span>
+            <span class="word size-1">人均20+</span>
+            <span class="word size-2">学生优惠</span>
+            <span class="word size-1">甜品</span>
+            <span class="word size-2">自习室</span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-title">今日推荐</div>
+          <div class="hero-card-name" id="hero-reco-name">川味小馆</div>
+          <div class="hero-card-meta" id="hero-reco-meta">人均 28 元 · 评分 4.7 · 380m</div>
+          <div class="hero-card-meta" id="hero-reco-date">2026-03-14 · 适宜吃辣</div>
+          <button class="primary" id="hero-reco-btn">查看详情</button>
+        </div>
+      </section>
+
+      <nav class="main-nav">
+        <button class="nav-item active" data-target="map-view">美食地图</button>
+        <button class="nav-item" data-target="list-view">餐馆列表</button>
+        <button class="nav-item" data-target="community-view">品鉴家聚集地</button>
+        <button class="nav-item" data-target="profile-view">个人中心</button>
+      </nav>
+
+
+
+      <section class="search-bar">
+        <div class="search-input">
+          <input type="text" id="search-input" placeholder="输入关键词搜索餐厅" />
+          <button class="primary" id="search-btn">搜索</button>
+        </div>
+        <div class="search-suggest" id="search-suggest"></div>
+        <div class="search-results">
+          <div class="search-meta" id="search-meta">请输入关键词开始搜索</div>
+          <div class="list-grid" id="search-grid"></div>
+        </div>
+      </section>
+
+      <main class="views">
+        <section class="view active" id="map-view">
+          <div class="section-header">
+            <h2>美食地图</h2>
+            <div class="school-switcher" id="school-switcher"></div>
+          </div>
+
+          <div class="map-area">
+            <div class="map-toolbar">
+              <div class="map-legend">
+                <span class="legend-item" data-type="正餐" role="button" aria-pressed="false"><i class="dot main"></i>正餐</span>
+                <span class="legend-item" data-type="饮品" role="button" aria-pressed="false"><i class="dot tea"></i>饮品</span>
+                <span class="legend-item" data-type="快餐" role="button" aria-pressed="false"><i class="dot snack"></i>快餐</span>
+              </div>
+            </div>
+            <div class="map-surface" id="map-surface">
+              <div class="user-pin" id="user-pin">你</div>
+            </div>
+            <div class="map-card" id="map-card">
+              <div class="map-card-title" id="map-card-title">川味小馆</div>
+              <div class="map-card-meta" id="map-card-meta">评分 4.7 · 人均 28 · 学生优惠</div>
+              <div class="map-card-actions">
+                <button class="secondary" id="map-detail-btn">详情</button>
+                <button class="primary" id="map-route-btn">路线</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="nearby-list">
+            <div class="section-header compact">
+              <h3>附近餐厅</h3>
+              <div class="segmented">
+                <button class="seg-btn active" data-range="200">200m</button>
+                <button class="seg-btn" data-range="500">500m</button>
+                <button class="seg-btn" data-range="1500">1.5km</button>
+              </div>
+            </div>
+            <div class="card-row" id="map-card-row"></div>
+          </div>
+          <div class="community-block">
+            <h3>打卡挑战</h3>
+            <div class="challenge" id="challenge-block">
+              <div class="challenge-title">南门小吃一条街 · 目标 5 家</div>
+              <div class="challenge-progress"><span id="challenge-progress-text">0/5</span>
+                <div class="progress-bar"><div class="progress-inner" id="challenge-progress-bar" style="width:0%"></div></div>
+              </div>
+              <button class="primary" id="challenge-view-route">查看路线</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="list-view">
+          <div class="section-header">
+          </div>
+          <div class="filters">
+            <div class="filter-tags" id="filter-tags"></div>
+            <button class="pill ghost" id="filter-clear" style="display:none">清除筛选</button>
+          </div>
+          <div class="advanced-panel show" id="advanced-panel">
+            <div class="panel-group">
+              <div class="panel-title">菜系</div>
+              <div class="panel-options" id="filter-cuisine"></div>
+            </div>
+            <div class="panel-group">
+              <div class="panel-title">人均</div>
+              <div class="panel-options" id="filter-price"></div>
+            </div>
+            <div class="panel-group">
+              <div class="panel-title">营业状态</div>
+              <div class="panel-options" id="filter-status"></div>
+            </div>
+            <div class="panel-group">
+              <div class="panel-title">标签</div>
+              <div class="panel-options" id="filter-tags-adv"></div>
+            </div>
+          </div>
+          <div class="filter-quick" id="quick-filters"></div>
+          <div class="list-grid" id="list-grid"></div>
+        </section>
+
+        <section class="view" id="community-view">
+          <div class="section-header">
+            <h2>品鉴家聚集地</h2>
+            <button class="pill">发帖</button>
+          </div>
+          <div class="community-top">
+            <div class="carousel" id="community-carousel">
+              <div class="carousel-track">
+                <div class="slide">热门帖子：#大学城最好吃的炸鸡#</div>
+                <div class="slide">热门打卡：川味小馆 · 今日 32 次打卡</div>
+                <div class="slide">社区活动：周五夜市团建报名中</div>
+              </div>
+              <div class="carousel-dots" id="carousel-dots"></div>
+            </div>
+            <div class="hot-words" id="hot-words">
+              <button class="chip" data-topic="麻辣烫">今天有 23 人在聊 麻辣烫</button>
+              <button class="chip" data-topic="炸鸡">今天有 18 人在聊 炸鸡</button>
+              <button class="chip" data-topic="咖啡续命">今天有 12 人在聊 咖啡续命</button>
+            </div>
+          </div>
+          <div class="community-block">
+            <h3>同学都在聊</h3>
+            <div class="topic-list" id="topic-list"></div>
+          </div>
+          <div class="community-block">
+            <h3>今日打卡榜</h3>
+            <div class="feed-list" id="checkin-feed"></div>
+          </div>
+          <div class="community-block">
+            <h3>约饭组局</h3>
+            <div class="meetup-list" id="meetup-list"></div>
+            <button class="fab" id="meetup-create">+ 发起约饭</button>
+          </div>
+          <div class="community-block">
+            <h3>话题PK</h3>
+            <div class="pk" id="pk-area" data-left="麻辣烫" data-right="螺蛳粉">
+              <div class="pk-visual">
+                <div class="pk-option" id="pk-left">
+                  <div class="pk-avatar">🍢</div>
+                  <div class="pk-name" id="pk-left-name">麻辣烫</div>
+                  <div class="pk-count"><span id="pk-left-count">0</span> 人支持</div>
+                </div>
+                <div class="pk-vs-circle">VS</div>
+                <div class="pk-option" id="pk-right">
+                  <div class="pk-avatar">🍜</div>
+                  <div class="pk-name" id="pk-right-name">螺蛳粉</div>
+                  <div class="pk-count"><span id="pk-right-count">0</span> 人支持</div>
+                </div>
+              </div>
+              <div class="pk-progress">
+                <div class="left" id="pk-left-bar" style="width:50%"></div>
+                <div class="right" id="pk-right-bar" style="width:50%"></div>
+                <div class="ratio-text" id="pk-ratio-text">50% : 50%</div>
+              </div>
+              <div class="pk-footer">
+                <div class="muted">总参与 <span id="pk-total">0</span> 人</div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="pill ghost" id="pk-history">往期</button>
+                  <button class="primary" id="pk-comment">发表观点</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="community-block">
+            <h3>本月热榜</h3>
+            <div class="rank-list" id="rank-list"></div>
+          </div>
+        </section>
+
+        <section class="view" id="profile-view">
+          <div class="section-header">
+            <h2>个人中心</h2>
+            <button class="pill ghost" id="open-verify">学生认证</button>
+          </div>
+          <div class="identity-card">
+            <div class="identity-row">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div class="avatar">我</div>
+                <div class="identity-meta">
+                  <div class="name">小同学 <span class="badge-verify" id="verify-badge" style="display:none">已认证</span></div>
+                  <div class="labels">
+                    <span class="label">干饭王</span>
+                    <span class="label">避雷先锋</span>
+                    <span class="label">美食种草机</span>
+                  </div>
+                </div>
+              </div>
+              <div class="identity-actions">
+                <button class="secondary" id="edit-profile">编辑资料</button>
+                <button class="secondary" id="open-settings">设置</button>
+              </div>
+            </div>
+            <div class="identity-stats">
+              <div class="stat">
+                <div>0 人</div>
+                <div class="muted">被关注</div>
+              </div>
+              <div class="stat">
+                <div>0 人</div>
+                <div class="muted">关注中</div>
+              </div>
+              <div class="stat" id="stat-reviews" style="cursor:pointer">
+                <div id="stat-reviews-count">0 篇</div>
+                <div class="muted">评价</div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-features">
+            <button class="feature" id="feature-favorites">我的收藏</button>
+            <button class="feature" id="feature-footprint">我的足迹</button>
+            <button class="feature" id="feature-meetups">我的约饭</button>
+            <button class="feature" id="feature-topics">我的话题</button>
+            <button class="feature" id="feature-badges">我的徽章</button>
+            <button class="feature" id="feature-coupons">优惠券包</button>
+            <button class="feature" id="feature-help">帮助反馈</button>
+            <button class="feature" id="feature-invite">邀请好友</button>
+          </div>
+        </section>
+      </main>
+
+      <section class="detail-modal" id="detail-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title" id="detail-title">川味小馆</div>
+              <div class="detail-meta" id="detail-meta">评分 4.7 · 人均 28 · 380m</div>
+            </div>
+            <button class="pill ghost" id="detail-close">关闭</button>
+          </div>
+          <div class="detail-body">
+            <div class="detail-section">
+              <h4>学生专属权益</h4>
+              <p id="detail-benefit">凭学生证享 9 折 · 周三套餐立减 5 元</p>
+            </div>
+            <div class="detail-section">
+              <h4>推荐菜</h4>
+              <div class="tag-cloud" id="detail-dishes"></div>
+            </div>
+            <div class="detail-section">
+              <h4>同学评价</h4>
+              <div class="review-list" id="detail-reviews"></div>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button class="secondary" id="detail-fav-btn">收藏</button>
+            <button class="secondary" id="detail-share-btn">分享</button>
+            <button class="secondary" id="detail-review-btn">写评价</button>
+            <button class="secondary" id="detail-checkin-btn">打卡</button>
+            <button class="primary" id="detail-nav-btn">导航</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="notify-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">消息</div>
+            </div>
+            <button class="pill ghost" id="notify-close">关闭</button>
+          </div>
+          <div class="detail-body">
+            <div class="notification-list" id="notification-list"></div>
+          </div>
+          <div class="detail-actions">
+            <button class="secondary" id="notify-clear">全部已读</button>
+          </div>
+        </div>
+      </section>
+      
+      <section class="detail-modal" id="route-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">🗺️ 挑战路线指引</div>
+              <div class="detail-meta" id="route-subtitle">从当前位置出发</div>
+            </div>
+            <button class="pill ghost" id="route-close">关闭</button>
+          </div>
+          <div class="detail-body" id="route-body"></div>
+          <div class="detail-actions">
+            <button class="primary" id="route-nav">开启导航</button>
+            <button class="secondary" id="route-ok">我知道了</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="favorites-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">我的收藏</div>
+              <div class="detail-meta" id="favorites-meta">0 家餐厅</div>
+            </div>
+            <div class="detail-actions" style="gap:8px">
+              <button class="pill ghost" id="favorites-close">返回</button>
+            </div>
+          </div>
+          <div class="detail-body">
+            <div class="favorites-folders" id="favorites-folders"></div>
+            <div class="favorites-list" id="favorites-list"></div>
+          </div>
+          <div class="detail-actions">
+            <button class="secondary" id="favorites-clear">清空收藏</button>
+          </div>
+        </div>
+      </section>
+      
+      <section class="detail-modal" id="folder-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">新建文件夹</div>
+              <div class="detail-meta">最多 10 个字符</div>
+            </div>
+            <button class="pill ghost" id="folder-cancel">取消</button>
+          </div>
+          <div class="detail-body">
+            <div class="form-row">
+              <input id="folder-name" maxlength="10" placeholder="输入文件夹名称"/>
+            </div>
+            <div class="icon-row" id="folder-icons">
+              <button class="icon-chip" data-ico="🍜">🍜</button>
+              <button class="icon-chip" data-ico="🍔">🍔</button>
+              <button class="icon-chip" data-ico="🍣">🍣</button>
+              <button class="icon-chip" data-ico="🍕">🍕</button>
+              <button class="icon-chip" data-ico="🥟">🥟</button>
+              <button class="icon-chip" data-ico="🍰">🍰</button>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button class="primary" id="folder-create">创建</button>
+          </div>
+        </div>
+      </section>
+      
+      <section class="detail-modal" id="reviews-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">我的评价</div>
+              <div class="detail-meta">按时间排序</div>
+            </div>
+            <button class="pill ghost" id="reviews-close">关闭</button>
+          </div>
+          <div class="detail-body">
+            <div class="post-list" id="reviews-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="footprint-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">我的足迹</div>
+              <div class="detail-meta">时间轴 · 地图</div>
+            </div>
+            <div class="detail-actions" style="gap:8px">
+              <button class="pill ghost" id="foot-report">生成年度报告</button>
+              <button class="pill ghost" id="footprint-close">返回</button>
+            </div>
+          </div>
+          <div class="detail-body">
+            <div class="detail-actions" style="justify-content:flex-start">
+              <button class="pill ghost" id="foot-tab-timeline">时间轴</button>
+              <button class="pill ghost" id="foot-tab-map">地图视图</button>
+              <div id="foot-year-nav" class="favorites-folders"></div>
+            </div>
+            <div class="timeline" id="footprint-timeline"></div>
+            <div class="map-surface" id="footprint-map" style="display:none;height:280px;position:relative">
+              <div class="detail-actions" style="position:absolute;right:8px;top:8px;gap:8px">
+                <button class="pill ghost" id="foot-heat">🔥 热度</button>
+                <button class="pill ghost" id="foot-shake">摇一摇</button>
+              </div>
+              <div style="position:absolute;left:8px;right:8px;bottom:8px">
+                <input type="range" id="foot-time-range" min="0" max="11" value="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="report-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">年度美食报告</div>
+              <div class="detail-meta">滑动查看</div>
+            </div>
+            <button class="pill ghost" id="report-close">关闭</button>
+          </div>
+          <div class="detail-body" id="report-slides"></div>
+          <div class="detail-actions">
+            <button class="secondary" id="report-share">分享报告</button>
+            <button class="secondary" id="report-replay">再看一次</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="meetups-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">我的约饭</div>
+              <div class="detail-meta">进行中 · 历史</div>
+            </div>
+            <button class="pill ghost" id="meetups-close">关闭</button>
+          </div>
+          <div class="detail-body">
+            <div class="feed-list" id="my-meetups"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="badges-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">我的徽章</div>
+              <div class="detail-meta">成就墙</div>
+            </div>
+            <button class="secondary" id="badges-close">关闭</button>
+          </div>
+          <div class="detail-body">
+            <div class="badge-wall" id="badge-wall"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="topics-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">我的话题</div>
+              <div class="detail-meta">全部 · 我发起的 · 我参与的</div>
+            </div>
+            <button class="pill ghost" id="topics-close">返回</button>
+          </div>
+          <div class="detail-body">
+            <div class="tabs underline" id="topics-tabs">
+              <button class="tab-btn active" data-tab="all">全部 <span id="topics-count-all">0</span></button>
+              <button class="tab-btn" data-tab="mine">我发起的 <span id="topics-count-mine">0</span></button>
+              <button class="tab-btn" data-tab="join">我参与的 <span id="topics-count-join">0</span></button>
+              <div class="tab-underline" id="topics-underline"></div>
+            </div>
+            <div class="topic-list" id="topics-list"></div>
+            <div class="empty" id="topics-empty" style="display:none">
+              <div class="illustration">🙂</div>
+              <div class="muted">还没有发起话题</div>
+              <button class="primary" id="topics-go-community">去社区聊聊</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="topic-detail-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title" id="topic-detail-title">话题详情</div>
+              <div class="detail-meta" id="topic-detail-meta">参与 · 浏览</div>
+            </div>
+            <button class="pill ghost" id="topic-detail-close">返回</button>
+          </div>
+          <div class="detail-body" id="topic-detail-body" style="position:relative">
+            <div class="post-list" id="topic-detail-list"></div>
+            <button class="primary" id="topic-jump-mine" style="position:fixed;right:16px;bottom:16px;display:none">回到我的发言</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="coupons-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">优惠券包</div>
+              <div class="detail-meta">全部 · 待使用 · 已过期/已使用</div>
+            </div>
+            <button class="pill ghost" id="coupons-close">返回</button>
+          </div>
+          <div class="detail-body">
+            <div class="saving-card" id="coupons-saving">
+              <div class="saving-amount" id="coupons-saving-amount">可节省 0 元 · 0 张待使用</div>
+              <button class="pill ghost" id="coupons-saving-detail">展开明细</button>
+            </div>
+            <div class="saving-detail" id="coupons-saving-panel" style="display:none"></div>
+            <div class="tabs underline" id="coupons-tabs">
+              <button class="tab-btn active" data-tab="all">全部</button>
+              <button class="tab-btn" data-tab="unused">待使用</button>
+              <button class="tab-btn" data-tab="done">已过期/已使用</button>
+              <div class="tab-underline" id="coupons-underline"></div>
+            </div>
+            <div class="coupon-list" id="coupons-list"></div>
+            <div class="empty" id="coupons-empty" style="display:none">
+              <div class="illustration">🎟️</div>
+              <div class="muted">去地图上领几张吧</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="coupon-code-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">出示此码使用</div>
+              <div class="detail-meta">门店可扫码核销</div>
+            </div>
+            <button class="pill ghost" id="coupon-code-close">关闭</button>
+          </div>
+          <div class="detail-body" id="coupon-code-body"></div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="help-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">帮助与反馈</div>
+              <div class="detail-meta">联系与反馈</div>
+            </div>
+            <button class="pill ghost" id="help-close">返回</button>
+          </div>
+          <div class="detail-body"></div>
+          <div class="detail-actions" style="justify-content:flex-end">
+            <button class="pill ghost" id="help-feedback">意见反馈</button>
+            <button class="pill ghost" id="help-contact">联系客服</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="faq-detail-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title" id="faq-title">问题详情</div>
+              <div class="detail-meta">详细解答</div>
+            </div>
+            <button class="pill ghost" id="faq-close">返回</button>
+          </div>
+          <div class="detail-body" id="faq-body"></div>
+          <div class="detail-actions">
+            <button class="secondary" id="faq-yes">有帮助</button>
+            <button class="secondary" id="faq-no">没帮助</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="feedback-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">意见反馈</div>
+              <div class="detail-meta">期待你的建议</div>
+            </div>
+            <button class="pill ghost" id="feedback-close">返回</button>
+          </div>
+          <div class="detail-body">
+            <div class="form-row">
+              <select id="feedback-type">
+                <option>功能建议</option>
+                <option>体验问题</option>
+                <option>内容纠错</option>
+              </select>
+            </div>
+            <div class="form-row"><textarea id="feedback-content" placeholder="请描述你的问题或建议"></textarea></div>
+            <div class="form-row"><input id="feedback-contact" placeholder="联系方式（选填）"/></div>
+            <div class="form-row"><button class="primary" id="feedback-submit">提交</button></div>
+            <div class="success-check" id="feedback-success" style="display:none">✔️ 已收到，感谢反馈</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-modal" id="chat-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">小觅助手</div>
+              <div class="detail-meta">智能客服</div>
+            </div>
+            <button class="pill ghost" id="chat-close">结束</button>
+          </div>
+          <div class="detail-body">
+            <div class="chat" id="chat-list"></div>
+            <div class="form-row">
+              <input id="chat-input" placeholder="请输入问题"/>
+              <button id="chat-send">发送</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="detail-modal" id="verify-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">学生认证</div>
+              <div class="detail-meta">学号/邮箱/学生证</div>
+            </div>
+            <button class="pill ghost" id="verify-close">关闭</button>
+          </div>
+          <div class="detail-body">
+            <div class="panel-group">
+              <button class="primary" id="verify-by-id">学号认证</button>
+              <button class="primary" id="verify-by-mail">校园邮箱认证</button>
+              <button class="primary" id="verify-by-card">学生证拍照认证</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
