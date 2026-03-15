@@ -350,7 +350,9 @@ const renderMarkers = () => {
   const list = visibleRestaurants()
   list.forEach((item) => {
     const marker = document.createElement("button")
-    marker.className = "map-marker"
+    // 初始化时判断是否是被选中的店
+    marker.className = `map-marker ${state.activeMapMarkerId === item.id ? "active" : ""}`
+    marker.dataset.id = item.id // 🟢 绑定店铺的 id
     marker.textContent = item.name
     marker.style.left = item.marker.left
     marker.style.top = item.marker.top
@@ -360,9 +362,20 @@ const renderMarkers = () => {
 }
 
 const setMapCard = (item) => {
+  state.activeMapMarkerId = item.id // 🟢 记录当前激活的店铺 ID
+
   document.getElementById("map-card-title").textContent = item.name
   document.getElementById("map-card-meta").textContent = `评分 ${item.rating} · 人均 ${item.price} 元 · ${item.tags.slice(0, 2).join(" · ")}`
   document.getElementById("map-detail-btn").onclick = () => openDetail(item)
+
+  // 🟢 遍历地图上的所有气泡，给对应的那个加上 active，其他的去掉
+  document.querySelectorAll("#map-surface .map-marker").forEach(marker => {
+    if (marker.dataset.id === item.id) {
+      marker.classList.add("active")
+    } else {
+      marker.classList.remove("active")
+    }
+  })
 }
 
 const isFavorite = (id) => state.favorites.some((fav) => fav.id === id)
@@ -387,21 +400,16 @@ const toggleFavorite = (item) => {
 
 const createCard = (item) => {
   const card = document.createElement("div")
-  const favLabel = isFavorite(item.id) ? "已收藏" : "收藏"
   card.className = "card"
   card.innerHTML = `
     <div class="card-photo"><img alt="${item.name}" src="${getPhotoSrc(item)}"/></div>
     <div class="card-title">${item.name}</div>
     <div class="card-meta">评分 ${item.rating} · 人均 ${item.price} 元 · ${item.distance}m</div>
     <div class="card-tags">${item.tags.slice(0, 3).map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
-    <button class="secondary" data-id="${item.id}">${favLabel}</button>
   `
-  const btn = card.querySelector("button")
-  btn.onclick = () => toggleFavorite(item)
-  card.onclick = (event) => {
-    if (event.target.tagName !== "BUTTON") {
-      openDetail(item)
-    }
+  // 现在整张卡片任意位置点击，都会直接打开详情页
+  card.onclick = () => {
+    openDetail(item)
   }
   return card
 }
@@ -523,15 +531,49 @@ const openDetail = (item) => {
   state.currentDetailId = item.id
   document.getElementById("detail-title").textContent = item.name
   document.getElementById("detail-meta").textContent = `评分 ${item.rating} · 人均 ${item.price} 元 · ${item.distance}m`
-  document.getElementById("detail-benefit").textContent = item.benefit
+  document.getElementById("detail-benefit").textContent = item.benefit || "暂无特定优惠"
   document.getElementById("detail-dishes").innerHTML = item.dishes.map((dish) => `<span class="tag">${dish}</span>`).join("")
-  document.getElementById("detail-reviews").innerHTML = item.reviews.map((review) => `
+  
+  // 同学评价摘要（仅展示最新 3 条）
+  const reviewsToShow = item.reviews.slice(0, 3)
+  document.getElementById("detail-reviews").innerHTML = reviewsToShow.map((review) => `
     <div class="review-item">
       <strong>${review.user}</strong>
       <span>${review.content}</span>
     </div>
   `).join("")
+
+  // 设置商家基础信息
+  const hoursEl = document.getElementById("detail-hours")
+  if (hoursEl) hoursEl.textContent = `🕒 营业时间：${item.status === '深夜营业' ? '17:00 - 02:00' : '10:00 - 22:00'}`
+  const addressEl = document.getElementById("detail-address")
+  if (addressEl) addressEl.textContent = `📍 地址：大学城${item.name}街${Math.floor(item.distance / 10)}号`
+  const phoneEl = document.getElementById("detail-phone")
+  if (phoneEl) phoneEl.textContent = `📞 电话：138${Math.floor(item.distance * 12345).toString().padStart(8, '0')}`
+
+  // 轮播图生成 (复用你原来的SVG生成器做占位)
+  const photoSrc = getPhotoSrc(item)
+  const carouselEl = document.getElementById("detail-carousel")
+  if (carouselEl) {
+    carouselEl.innerHTML = `
+      <img src="${photoSrc}" alt="${item.name} 场景图">
+      <img src="${photoSrc}" alt="${item.name} 菜品图1">
+      <img src="${photoSrc}" alt="${item.name} 菜品图2">
+    `
+  }
+
   updateDetailFavorite(item)
+
+  // 唤起导航 APP
+  const navBtn = document.getElementById("detail-nav-btn")
+  if (navBtn) {
+    navBtn.onclick = () => {
+      const url = `https://maps.apple.com/?q=${encodeURIComponent(item.name)}`
+      window.open(url, "_blank")
+      showToast(`正在为您导航至：${item.name}`)
+    }
+  }
+
   detailModal.classList.add("show")
 }
 
@@ -541,7 +583,8 @@ const closeDetail = () => {
 
 const updateDetailFavorite = (item) => {
   const btn = document.getElementById("detail-fav-btn")
-  btn.textContent = isFavorite(item.id) ? "已收藏" : "收藏"
+  if (!btn) return
+  btn.textContent = isFavorite(item.id) ? "❤️ 已收藏" : "🤍 收藏"
   btn.onclick = () => toggleFavorite(item)
 }
 
@@ -606,15 +649,54 @@ const bindMapLegend = () => {
 }
 
 const bindDetailActions = () => {
-  document.getElementById("map-detail-btn").onclick = () => openDetail(restaurants[0])
-  document.getElementById("map-route-btn").onclick = () => showToast("已打开路线规划")
-  document.getElementById("detail-share-btn").onclick = () => showToast("已生成分享卡片")
-  document.getElementById("detail-review-btn").onclick = () => showToast("评价编辑页已打开")
-  document.getElementById("detail-nav-btn").onclick = () => showToast("已唤起地图导航")
-  document.getElementById("detail-close").onclick = closeDetail
+  const mapDetailBtn = document.getElementById("map-detail-btn")
+  if (mapDetailBtn) mapDetailBtn.onclick = () => openDetail(restaurants[0])
+  
+  const mapRouteBtn = document.getElementById("map-route-btn")
+  if (mapRouteBtn) mapRouteBtn.onclick = () => showToast("已打开路线规划")
+  
+  const detailClose = document.getElementById("detail-close")
+  if (detailClose) detailClose.onclick = closeDetail
+  
   detailModal.onclick = (event) => {
     if (event.target === detailModal) {
       closeDetail()
+    }
+  }
+
+  // 查看全部评价功能
+  const allReviewsBtn = document.getElementById("detail-all-reviews-btn")
+  if (allReviewsBtn) {
+    allReviewsBtn.onclick = () => {
+      closeDetail()
+      openReviews() // 复用原有个人中心的评价面板或自定义的模块
+      showToast("已为你展开全部评价")
+    }
+  }
+
+  // 绑定“写评价”弹窗互动
+  const writeReviewBtn = document.getElementById("detail-review-btn")
+  const writeModal = document.getElementById("write-review-modal")
+  const writeClose = document.getElementById("write-review-close")
+  const writeSubmit = document.getElementById("write-review-submit")
+
+  if (writeReviewBtn) {
+    writeReviewBtn.onclick = () => {
+      if (writeModal) writeModal.classList.add("show")
+    }
+  }
+  if (writeClose) {
+    writeClose.onclick = () => {
+      if (writeModal) writeModal.classList.remove("show")
+    }
+  }
+  if (writeSubmit) {
+    writeSubmit.onclick = () => {
+      const content = document.getElementById("write-review-content").value
+      if (!content.trim()) return showToast("请输入评价内容")
+      showToast("发布成功，感谢你的美食排雷/种草！")
+      document.getElementById("write-review-content").value = ""
+      if (writeModal) writeModal.classList.remove("show")
     }
   }
 }
@@ -651,11 +733,28 @@ const searchItems = (query) => {
 const renderSearchResults = (query) => {
   const results = searchItems(query)
   searchGrid.innerHTML = ""
+  
   if (!query.trim()) {
-    searchMeta.textContent = "请输入关键词开始搜索"
+    if (searchMeta) searchMeta.textContent = "请输入关键词开始搜索"
     return
   }
-  searchMeta.textContent = `找到 ${results.length} 家相关餐厅`
+  
+  // 核心：无结果时的反馈 UI 和推荐标签重新搜索
+  if (results.length === 0) {
+    if (searchMeta) searchMeta.textContent = ""
+    searchGrid.innerHTML = `
+      <div class="search-empty">
+        <div style="font-size: 40px; margin-bottom: 10px;">🍽️</div>
+        <div>没有找到相关餐厅，试试其他关键词吧～</div>
+        <div class="search-empty-tags">
+          ${["川菜", "学生优惠", "适合自习", "烧烤"].map(tag => `<button class="pill ghost" onclick="document.getElementById('search-input').value='${tag}'; document.getElementById('search-btn').click();">${tag}</button>`).join("")}
+        </div>
+      </div>
+    `
+    return
+  }
+
+  if (searchMeta) searchMeta.textContent = `找到 ${results.length} 家相关餐厅`
   results.forEach((item) => searchGrid.appendChild(createCard(item)))
 }
 
@@ -683,16 +782,37 @@ const renderSearchSuggest = (query) => {
 }
 
 const bindSearch = () => {
+  const searchCancelBtn = document.getElementById("search-cancel-btn")
+  
   searchInput.oninput = (event) => {
     state.searchQuery = event.target.value
+    // 输入时显示取消按钮
+    if (searchCancelBtn) {
+      searchCancelBtn.style.display = state.searchQuery.length > 0 ? "inline-block" : "none"
+    }
     renderSearchSuggest(state.searchQuery)
   }
+  
   searchInput.onkeydown = (event) => {
     if (event.key === "Enter") {
       renderSearchResults(searchInput.value)
     }
   }
+  
   searchBtn.onclick = () => renderSearchResults(searchInput.value)
+  
+  // 点击取消清空搜索栏并还原
+  if (searchCancelBtn) {
+    searchCancelBtn.onclick = () => {
+      searchInput.value = ""
+      state.searchQuery = ""
+      searchCancelBtn.style.display = "none"
+      renderSearchSuggest("")
+      searchGrid.innerHTML = "" 
+      if (searchMeta) searchMeta.textContent = ""
+    }
+  }
+  
   renderSearchSuggest("")
 }
 

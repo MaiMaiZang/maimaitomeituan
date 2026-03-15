@@ -176,12 +176,25 @@ button:active {
   line-height: 1.6;
 }
 
+/* 外层容器：垂直排列三行 */
 .word-cloud {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px 14px;
+  flex-direction: column;
+  gap: 12px; /* 行与行之间的间距 */
   margin-top: 16px;
-  align-items: baseline;
+}
+
+/* 每一行：水平排列 */
+.word-row {
+  display: flex;
+  flex-wrap: wrap; /* 手机屏幕太小时允许自然换行，避免挤出屏幕 */
+  align-items: center; /* 让大小不一的文字垂直居中对齐 */
+  gap: 12px 16px; /* 词与词之间的间距 */
+}
+
+/* 小细节：让第二行稍微往右缩进一点点，打破死板的对齐，更有“云”的感觉 */
+.word-row:nth-child(2) {
+  padding-left: 24px;
 }
 
 .word {
@@ -263,6 +276,7 @@ button:active {
   box-shadow: var(--shadow);
   display: grid;
   gap: 12px;
+  margin-bottom: 24px;
 }
 
 .search-input {
@@ -462,6 +476,15 @@ button:active {
   font-weight: 600;
   box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
   border: 1px solid var(--line);
+  transition:all 0.2s ease;
+}
+
+.map-marker.active {
+  background: var(--primary);
+  color: #ae391f;
+  border-color: var(--primary);
+  z-index: 10;
+  transform: scale(1.1);
 }
 
 .map-card {
@@ -1702,4 +1725,49 @@ button:active {
   .detail-actions {
     justify-content: flex-start;
   }
+}
+
+/* 固定搜索框在顶部，实现吸顶效果醒目提示 */
+.search-bar {
+  z-index: 15;
+}
+
+/* 详情弹窗轮播图 */
+.detail-carousel {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+}
+.detail-carousel img {
+  width: 200px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+.detail-info {
+  background: var(--secondary);
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--text);
+  display: grid;
+  gap: 8px;
+}
+
+/* 搜索无结果的提示UI */
+.search-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+.search-empty-tags {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
 }

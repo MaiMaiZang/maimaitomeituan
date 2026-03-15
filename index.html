@@ -32,22 +32,30 @@
           <h1>你的大学城美食向导。</h1>
           <p>同学评价才算数，学生优惠才划算——聚餐约会自习，打卡收藏等你来</p>
           <div class="word-cloud" aria-label="关键词云">
-            <span class="word size-3 accent">川菜</span>
-            <span class="word size-2">轻食</span>
-            <span class="word size-1">自习</span>
-            <span class="word size-3">烧烤</span>
-            <span class="word size-2 accent">奶茶</span>
-            <span class="word size-2">咖啡</span>
-            <span class="word size-1">聚会</span>
-            <span class="word size-1">夜宵</span>
-            <span class="word size-2">低卡</span>
-            <span class="word size-1">外卖</span>
-            <span class="word size-2 accent">团建</span>
-            <span class="word size-1">打卡</span>
-            <span class="word size-1">人均20+</span>
-            <span class="word size-2">学生优惠</span>
-            <span class="word size-1">甜品</span>
-            <span class="word size-2">自习室</span>
+            <div class="word-row">
+              <span class="word size-3 accent">川菜</span>
+              <span class="word size-2">轻食</span>
+              <span class="word size-1">自习</span>
+              <span class="word size-3">烧烤</span>
+              <span class="word size-2 accent">奶茶</span>
+            </div>
+            
+            <div class="word-row">
+              <span class="word size-2">咖啡</span>
+              <span class="word size-1">聚会</span>
+              <span class="word size-1">夜宵</span>
+              <span class="word size-2">低卡</span>
+              <span class="word size-1">外卖</span>
+              <span class="word size-2 accent">团建</span>
+            </div>
+            
+            <div class="word-row">
+              <span class="word size-1">打卡</span>
+              <span class="word size-1">人均20+</span>
+              <span class="word size-2">学生优惠</span>
+              <span class="word size-1">甜品</span>
+              <span class="word size-2">自习室</span>
+            </div>
           </div>
         </div>
         <div class="hero-card">
@@ -71,10 +79,12 @@
       <section class="search-bar">
         <div class="search-input">
           <input type="text" id="search-input" placeholder="输入关键词搜索餐厅" />
+          <button class="pill ghost" id="search-cancel-btn" style="display:none; margin-right: 8px;">取消</button>
           <button class="primary" id="search-btn">搜索</button>
         </div>
         <div class="search-suggest" id="search-suggest"></div>
         <div class="search-results">
+          <div class="search-meta" id="search-meta"></div>
           <div class="list-grid" id="search-grid"></div>
         </div>
       </section>
@@ -117,16 +127,6 @@
               </div>
             </div>
             <div class="card-row" id="map-card-row"></div>
-          </div>
-          <div class="community-block">
-            <h3>打卡挑战</h3>
-            <div class="challenge" id="challenge-block">
-              <div class="challenge-title">南门小吃一条街 · 目标 5 家</div>
-              <div class="challenge-progress"><span id="challenge-progress-text">0/5</span>
-                <div class="progress-bar"><div class="progress-inner" id="challenge-progress-bar" style="width:0%"></div></div>
-              </div>
-              <button class="primary" id="challenge-view-route">查看路线</button>
-            </div>
           </div>
         </section>
 
@@ -253,15 +253,15 @@
             </div>
             <div class="identity-stats">
               <div class="stat">
-                <div>0 人</div>
-                <div class="muted">被关注</div>
+                <div>27 人</div>
+                <div class="muted">粉丝</div>
               </div>
               <div class="stat">
-                <div>0 人</div>
-                <div class="muted">关注中</div>
+                <div>2 人</div>
+                <div class="muted">关注</div>
               </div>
               <div class="stat" id="stat-reviews" style="cursor:pointer">
-                <div id="stat-reviews-count">0 篇</div>
+                <div id="stat-reviews-count">24 篇</div>
                 <div class="muted">评价</div>
               </div>
             </div>
@@ -286,28 +286,54 @@
               <div class="detail-title" id="detail-title">川味小馆</div>
               <div class="detail-meta" id="detail-meta">评分 4.7 · 人均 28 · 380m</div>
             </div>
-            <button class="pill ghost" id="detail-close">关闭</button>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button class="pill ghost" id="detail-fav-btn" style="color:var(--primary);border-color:var(--primary);">❤️ 收藏</button>
+              <button class="pill ghost" id="detail-close">关闭</button>
+            </div>
           </div>
           <div class="detail-body">
-            <div class="detail-section">
-              <h4>学生专属权益</h4>
-              <p id="detail-benefit">凭学生证享 9 折 · 周三套餐立减 5 元</p>
+            <!-- 图片横向轮播图 -->
+            <div class="detail-carousel" id="detail-carousel"></div>
+            
+            <!-- 基础营业信息 -->
+            <div class="detail-info">
+              <div id="detail-hours">🕒 营业时间：10:00 - 22:00</div>
+              <div id="detail-address">📍 地址：大学城学府路1号</div>
+              <div id="detail-phone">📞 电话：13800138000</div>
             </div>
+
             <div class="detail-section">
-              <h4>推荐菜</h4>
+              <h4>学生专属权益 & 推荐菜</h4>
+              <p id="detail-benefit" style="margin-bottom: 8px; font-size: 13px; color: var(--primary);">凭学生证享 9 折 · 周三套餐立减 5 元</p>
               <div class="tag-cloud" id="detail-dishes"></div>
             </div>
             <div class="detail-section">
               <h4>同学评价</h4>
               <div class="review-list" id="detail-reviews"></div>
+              <button class="pill ghost" style="width:100%; margin-top:8px;" id="detail-all-reviews-btn">查看全部评价</button>
             </div>
           </div>
           <div class="detail-actions">
-            <button class="secondary" id="detail-fav-btn">收藏</button>
-            <button class="secondary" id="detail-share-btn">分享</button>
             <button class="secondary" id="detail-review-btn">写评价</button>
-            <button class="secondary" id="detail-checkin-btn">打卡</button>
             <button class="primary" id="detail-nav-btn">导航</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 新增写评价的交互弹窗 -->
+      <section class="detail-modal" id="write-review-modal">
+        <div class="detail-content">
+          <div class="detail-header">
+            <div><div class="detail-title">写评价</div></div>
+            <button class="pill ghost" id="write-review-close">取消</button>
+          </div>
+          <div class="detail-body">
+            <div class="form-row">
+              <textarea id="write-review-content" rows="4" placeholder="说说你的用餐体验吧..."></textarea>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button class="primary" id="write-review-submit">发布评价</button>
           </div>
         </div>
       </section>
@@ -329,22 +355,6 @@
         </div>
       </section>
       
-      <section class="detail-modal" id="route-modal">
-        <div class="detail-content">
-          <div class="detail-header">
-            <div>
-              <div class="detail-title">🗺️ 挑战路线指引</div>
-              <div class="detail-meta" id="route-subtitle">从当前位置出发</div>
-            </div>
-            <button class="pill ghost" id="route-close">关闭</button>
-          </div>
-          <div class="detail-body" id="route-body"></div>
-          <div class="detail-actions">
-            <button class="primary" id="route-nav">开启导航</button>
-            <button class="secondary" id="route-ok">我知道了</button>
-          </div>
-        </div>
-      </section>
 
       <section class="detail-modal" id="favorites-modal">
         <div class="detail-content">
